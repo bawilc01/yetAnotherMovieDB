@@ -5,7 +5,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
-using System.Data.SQLite;
 
 namespace yetAnotherMovieDB
 {
@@ -20,55 +19,56 @@ namespace yetAnotherMovieDB
             // If the user wants to add
             //Call the constructor that has no parameters.
            Movie movie = new Movie(); //hmm, not sure how to use
-           /*Console.WriteLine("What is your movie name?");
-            movie.Title = Console.ReadLine();
-            Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
-            movie.MovieType = Console.ReadLine();
-            //have to convert int to string since NumOfCopies is an int in the Movie class
-            string movieCopies;
-            Console.WriteLine("How many copies do you have?");
-            movieCopies = Console.ReadLine();
+                                      /*Console.WriteLine("What is your movie name?");
+                                       movie.Title = Console.ReadLine();
+                                       Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
+                                       movie.MovieType = Console.ReadLine();
+                                       //have to convert int to string since NumOfCopies is an int in the Movie class
+                                       string movieCopies;
+                                       Console.WriteLine("How many copies do you have?");
+                                       movieCopies = Console.ReadLine();
 
-            //convert movieCopies from string to int and return answer depending on number of copies owned
-            // Create a list to write db objects to. will convert list objects to database objects and save to MovieDB 
-            List<string> movieList = new List<string>();
+                                       //convert movieCopies from string to int and return answer depending on number of copies owned
+                                       // Create a list to write db objects to. will convert list objects to database objects and save to MovieDB 
+                                       List<string> movieList = new List<string>();
 
-            
 
-            int copies = movie.NumOfCopies;
-            if (!Int32.TryParse(movieCopies, out copies))
-            {
-                Console.WriteLine("Invalid data input. Only whole numbers accepted. Please try again.");
-                Main(); //is calling Main the best way?
-                //want to continue the loop but continue doesn't work here
-            }
-            else if (copies == 0)
-            {
-                Console.WriteLine("You have to enter a number greater than 1.");
-                Main(); //is calling Main the best way?
-                //want to continue the loop but continue doesn't work here
-            }
-            else if (copies == 1)
-            {
-                Console.WriteLine(copies + " copy of " + movie.Title + " of type " + movie.MovieType + " has been added to your database.");
-            }
-            else
-            {
-                Console.WriteLine(copies + " copies of " + movie.Title + " of type " + movie.MovieType + " has been added to your database.");
-            }
 
-            // Add items using Add method   
-            movieList.Add(movie.Title + ", " + movie.MovieType + ", " + copies.ToString());
+                                       int copies = movie.NumOfCopies;
+                                       if (!Int32.TryParse(movieCopies, out copies))
+                                       {
+                                           Console.WriteLine("Invalid data input. Only whole numbers accepted. Please try again.");
+                                           Main(); //is calling Main the best way?
+                                           //want to continue the loop but continue doesn't work here
+                                       }
+                                       else if (copies == 0)
+                                       {
+                                           Console.WriteLine("You have to enter a number greater than 1.");
+                                           Main(); //is calling Main the best way?
+                                           //want to continue the loop but continue doesn't work here
+                                       }
+                                       else if (copies == 1)
+                                       {
+                                           Console.WriteLine(copies + " copy of " + movie.Title + " of type " + movie.MovieType + " has been added to your database.");
+                                       }
+                                       else
+                                       {
+                                           Console.WriteLine(copies + " copies of " + movie.Title + " of type " + movie.MovieType + " has been added to your database.");
+                                       }
 
-            // Show items in list
-            foreach (string movieItem in movieList)
-            {
-                Console.WriteLine(movieItem);
-            } ERASE HERE*/
+                                       // Add items using Add method   
+                                       movieList.Add(movie.Title + ", " + movie.MovieType + ", " + copies.ToString());
+
+                                       // Show items in list
+                                       foreach (string movieItem in movieList)
+                                       {
+                                           Console.WriteLine(movieItem);
+                                       } ERASE HERE*/
 
             //search entire database by title
             //path to MovieDB in cs variable
             string cs = "Data Source=C:\\Users\\Brittney\\Desktop\\db\\MovieDB";
+            //string cs = @"Data Source=.\movieDB"; relative path needed
 
             Console.WriteLine("Enter any movie title to see if its in your movie database: ");
             movie.Title = Console.ReadLine();
@@ -79,7 +79,7 @@ namespace yetAnotherMovieDB
                 con.Open();
                 //user can search database without having to type quotes for title (string value)
                 string stm = "SELECT * FROM MovieDB WHERE title = '" + movie.Title+ "'";
-
+                
                 // execute select statement
                 using (SQLiteCommand cmd = new SQLiteCommand(stm, con))
                 {
