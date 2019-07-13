@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data.SQLite;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MovieApp
 {
@@ -15,16 +16,16 @@ namespace MovieApp
             /******************************************
              * CREATE TABLE, CREATE DB CONNECTION - does this need to be done every time?
              ******************************************/
-            SQLiteConnection.CreateFile("MovieDatabase.sqlite");
+            //SQLiteConnection.CreateFile("MovieDatabase.db");
 
-            SQLiteConnection MovieDatabaseConnection = new SQLiteConnection("Data Source=MovieDatabase.sqlite;Version=3;");
+            SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.db; version=3;");
 
             MovieDatabaseConnection.Open();
 
-            string sql = "CREATE TABLE MovieDatabase (title VARCHAR(20), movieType VARCHAR(20), numOfCopies INT)";
+            //string sql = "CREATE TABLE MovieDatabase (title VARCHAR(20), movieType VARCHAR(20), numOfCopies INT)";
 
-            SQLiteCommand command = new SQLiteCommand(sql, MovieDatabaseConnection);
-            command.ExecuteNonQuery();
+            //SQLiteCommand command = new SQLiteCommand(sql, MovieDatabaseConnection);
+            //command.ExecuteNonQuery();
 
             /******************************************
             * CREATE INSTANCE OF CLASS
@@ -44,12 +45,12 @@ namespace MovieApp
             ******************************************/
 
 
-            Console.WriteLine("Do you want to view your database or add a new movie? Press A for Add a Movie, V for View Movie Database, S for Search database, and D to Delete a database item.");
+            Console.WriteLine("Do you want to view your database or add a new movie? Press A for Add a Movie, V for View Movie Database, S for Search database, and D to Delete a database item, and Q to quit.");
             string userInput = Console.ReadLine();
 
-            using (SQLiteConnection conAdd = new SQLiteConnection(MovieDatabaseConnection))
+            //  using (SQLiteConnection conAdd = new SQLiteConnection(MovieDatabaseConnection))
 
-                if (userInput.ToUpper() == "A")
+             while (userInput.ToUpper() == "A")
                 {
                     Console.WriteLine("What is the title of your movie?");
                     newMovie.Title = Console.ReadLine();
@@ -65,7 +66,6 @@ namespace MovieApp
                     movieCopies = Console.ReadLine();
 
 
-                    //List<string> movieList = new List<string>();
                     int copies = newMovie.NumOfCopies;
                     if (!Int32.TryParse(movieCopies, out copies))
                     {
@@ -81,39 +81,35 @@ namespace MovieApp
                     }
                     else if (copies == 1)
                     {
-                        sql = "insert into MovieDatabase (title, movieType, numOfCopies) values ('" + newMovie.Title + "'" + ", '" + newMovie.MovieType + "'" + ", " + newMovie.NumOfCopies + ")";
-                        command = new SQLiteCommand(sql, MovieDatabaseConnection);
+                        string sql = "insert into MovieDatabase (title, movieType, numOfCopies) values ('" + newMovie.Title + "'" + ", '" + newMovie.MovieType + "'" + ", " + newMovie.NumOfCopies + ");";
+                        SQLiteCommand command = new SQLiteCommand(sql, MovieDatabaseConnection);
                         command.ExecuteNonQuery();
                         Console.WriteLine(copies + " copy of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
                     }
                     else
                     {
-                        sql = "insert into MovieDatabase (title, movieType, numOfCopies) values ('" + newMovie.Title + "'" + ", '" + newMovie.MovieType + "'" + ", " + newMovie.NumOfCopies + ")";
-                        command = new SQLiteCommand(sql, MovieDatabaseConnection);
+                        string sql = "insert into MovieDatabase (title, movieType, numOfCopies) values ('" + newMovie.Title + "'" + ", '" + newMovie.MovieType + "'" + ", " + newMovie.NumOfCopies + ");";
+                        SQLiteCommand command = new SQLiteCommand(sql, MovieDatabaseConnection);
                         command.ExecuteNonQuery();
                         Console.WriteLine(copies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
-                    }
-                    conAdd.Close();
-                    Environment.Exit(0);
-                }
-                /******************************************
-                 * SEARCH DATABASE
-                 ******************************************/
-                else if (userInput.ToUpper() == "S")
-                {
-                    string cs = "Data Source=MovieDatabase.sqlite;Version=3;"; //TRYING TO FIND RELATIVE PATH
 
+                    }
+                Console.WriteLine("Do you want to view your database or add a new movie? Press A for Add a Movie, V for View Movie Database, S for Search database, and D to Delete a database item, and Q to quit.");
+                userInput = Console.ReadLine();
+
+            }
+
+             /******************************************
+             * SEARCH DATABASE
+             ******************************************/
+                while (userInput.ToUpper() == "S")
+                {
                     Console.WriteLine("Enter any movie title to see if its in your movie database: ");
                     newMovie.Title = Console.ReadLine();
-
-                    //connection to MovieDatabase 
-                    using (SQLiteConnection con = new SQLiteConnection(cs))
+                    using (SQLiteConnection con = new SQLiteConnection(MovieDatabaseConnection))
                     {
-                        con.Open();
-                        //user can search database without having to type quotes for title (string value)
-                        string stm = "SELECT * FROM MovieDatabase WHERE title = '" + newMovie.Title + "'";
+                        string stm = "SELECT * FROM MovieDatabase WHERE title = '" + newMovie.Title + "';";
 
-                        // execute select statement
                         using (SQLiteCommand cmd = new SQLiteCommand(stm, con))
                         {
                             using (SQLiteDataReader rdr = cmd.ExecuteReader())
@@ -132,75 +128,90 @@ namespace MovieApp
                                         }
                                         else
                                         {
-                                            Console.WriteLine(newMovie.Title + " is not in your database."); ;
+                                            Console.WriteLine(newMovie.Title + " is not in your database.");
                                         }
                                     }
                                 }
                             }
                         }
-                        //close connection
-                        con.Close();
-                    }
+                    Console.WriteLine("Do you want to view your database or add a new movie? Press A for Add a Movie, V for View Movie Database, S for Search database, and D to Delete a database item, and Q to quit.");
+                    userInput = Console.ReadLine();
                 }
-                else if (userInput.ToUpper() == "V")
-                {
-                    string cs = "Data Source=MovieDatabase.sqlite;Version=3;"; //TRYING TO FIND RELATIVE PATH
 
-                    /*Console.WriteLine("Enter any movie title to see if its in your movie database: ");
-                    newMovie.Title = Console.ReadLine();*/
-
-                    //connection to MovieDatabase 
-                    using (SQLiteConnection con = new SQLiteConnection(cs))
+                    /******************************************
+                    * SEARCH DATABASE
+                    ******************************************/
+                    while (userInput.ToUpper() == "V")
                     {
-                        con.Open();
-                        //user can search database without having to type quotes for title (string value)
-                        string stm = "SELECT * FROM MovieDatabase";
-
-                        // execute select statement
-                        using (SQLiteCommand cmd = new SQLiteCommand(stm, con))
+                        using (SQLiteConnection con = new SQLiteConnection(MovieDatabaseConnection))
                         {
-                            using (SQLiteDataReader rdr = cmd.ExecuteReader())
+                            string stm = "SELECT * FROM MovieDatabase;";
+
+                            using (SQLiteCommand cmd = new SQLiteCommand(stm, con))
                             {
-                                while (rdr.Read())
+                                using (SQLiteDataReader rdr = cmd.ExecuteReader())
                                 {
-                                    //will write if statement showing this message only if movie is in database
-                                    //searching database for movie
-                                    for (int i = 0; i < rdr.FieldCount; i++)
+                                    while (rdr.Read())
                                     {
-                                        //prints column name and result(s) to database
-
-                                        Console.WriteLine("Database Results: ");
-                                        Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
-
+                                        //will write if statement showing this message only if movie is in database
+                                        //searching database for movie
+                                        for (int i = 0; i < rdr.FieldCount; i++)
+                                        {
+                                            //prints column name and result(s) to database
+                                            if (rdr.HasRows)
+                                            {
+                                                Console.WriteLine(newMovie.Title + " is in your database.");
+                                                Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine(newMovie.Title + " is not in your database."); ;
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        }
-                        //close connection
-                        con.Close();
+                        Console.WriteLine("Do you want to view your database or add a new movie? Press A for Add a Movie, V for View Movie Database, S for Search database, and D to Delete a database item, and Q to quit.");
+                        userInput = Console.ReadLine();
+                    }
+
+                    if (userInput.ToUpper() == "Q")
+                    {
+                        Console.WriteLine("Exiting application");
+                        MovieDatabaseConnection.Close();
+                        Task.Delay(3000).Wait();
+                        Environment.Exit(0);
 
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Exiting application.");
-                    Console.ReadKey();
-                    Environment.Exit(0);
-                }
-
-
-            /*Not sure if this is needed yet
-            // Add items using Add method   
-            movieList.Add(newMovie.Title + ", " + newMovie.MovieType + ", " + copies.ToString());
-            // Show items in list
-            foreach (string movieItem in movieList)
-            {
-                Console.WriteLine(movieItem);
+           
             }
-
-
-            */
 
         }
     }
 }
+
+/* 
+ * 
+ * try
+{
+    string sql = "select * from Condition";
+SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+
+SQLiteDataReader reader = command.ExecuteReader();
+
+    while (reader.Read())
+        Console.WriteLine("Name: " + reader["name"] + "\tScore: " + reader["id"]);
+
+    Console.ReadLine();
+    return null;
+}
+catch (Exception exc)
+{
+    return null;
+}
+finally
+{
+    m_dbConnection.Close();
+}
+*/
