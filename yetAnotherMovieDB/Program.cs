@@ -17,16 +17,14 @@ namespace MovieApp
              * CREATE TABLE, CREATE DB CONNECTION - does this need to be done every time?
              ******************************************/
             //SQLiteConnection.CreateFile("MovieDatabase.db");
+            //string createCmd = "CREATE TABLE MovieDatabase (title VARCHAR(20), movieType VARCHAR(20), numOfCopies INT)";
 
-            SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.db; version=3;");
+            SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;");         
 
             MovieDatabaseConnection.Open();
 
-            //string sql = "CREATE TABLE MovieDatabase (title VARCHAR(20), movieType VARCHAR(20), numOfCopies INT)";
-
-            //SQLiteCommand command = new SQLiteCommand(sql, MovieDatabaseConnection);
-            //command.ExecuteNonQuery();
-
+            //SQLiteCommand command1 = new SQLiteCommand(createCmd, MovieDatabaseConnection);
+            //command1.ExecuteNonQuery();
             /******************************************
             * CREATE INSTANCE OF CLASS
             ******************************************/
@@ -47,8 +45,6 @@ namespace MovieApp
 
             Console.WriteLine("Do you want to view your database or add a new movie? Press A for Add a Movie, V for View Movie Database, S for Search database, and D to Delete a database item, and Q to quit.");
             string userInput = Console.ReadLine();
-
-            //  using (SQLiteConnection conAdd = new SQLiteConnection(MovieDatabaseConnection))
 
              while (userInput.ToUpper() == "A")
                 {
@@ -123,12 +119,11 @@ namespace MovieApp
                                         //prints column name and result(s) to database
                                         if (rdr.HasRows)
                                         {
-                                            Console.WriteLine(newMovie.Title + " is in your database.");
                                             Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
                                         }
                                         else
                                         {
-                                            Console.WriteLine(newMovie.Title + " is not in your database.");
+                                            Console.WriteLine(newMovie.Title + " is not in your database."); //doesn't work
                                         }
                                     }
                                 }
@@ -139,7 +134,7 @@ namespace MovieApp
                 }
 
                     /******************************************
-                    * SEARCH DATABASE
+                    * VIEW ENTIRE DATABASE
                     ******************************************/
                     while (userInput.ToUpper() == "V")
                     {
@@ -152,21 +147,12 @@ namespace MovieApp
                                 using (SQLiteDataReader rdr = cmd.ExecuteReader())
                                 {
                                     while (rdr.Read())
-                                    {
-                                        //will write if statement showing this message only if movie is in database
-                                        //searching database for movie
+                                    {                                        
+                                        //should display all movies in db
                                         for (int i = 0; i < rdr.FieldCount; i++)
                                         {
-                                            //prints column name and result(s) to database
-                                            if (rdr.HasRows)
-                                            {
-                                                Console.WriteLine(newMovie.Title + " is in your database.");
-                                                Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine(newMovie.Title + " is not in your database."); ;
-                                            }
+                                            Console.WriteLine("Your movie database: ");
+                                            Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
                                         }
                                     }
                                 }
@@ -174,6 +160,7 @@ namespace MovieApp
                         Console.WriteLine("Do you want to view your database or add a new movie? Press A for Add a Movie, V for View Movie Database, S for Search database, and D to Delete a database item, and Q to quit.");
                         userInput = Console.ReadLine();
                     }
+                    
 
                     if (userInput.ToUpper() == "Q")
                     {
