@@ -19,7 +19,7 @@ namespace MovieApp
             //5  - Delete
             // anything else - Exit
 
-            //saving connection string
+            //need to update to relative connection string throughout app
             //SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;");
 
             Console.WriteLine("Welcome. Please make a selection.");
@@ -88,10 +88,10 @@ namespace MovieApp
                             }
                     break;                    
                 case 4:
-                    //edit logic
+                    //edit logic to be added on 7/17
                 case 5:
-                    //delete logic
-                    //break;
+                //delete logic to be added on 7/17
+                //break;
                 default:
                     Console.WriteLine("Exiting... valid input not selected.");
                     Environment.Exit(0);
