@@ -11,7 +11,7 @@ namespace MovieApp
     {
         public string Title { get; set; }
         public string MovieType { get; set; } //want to be enum
-        public int NumOfCopies { get; set; } //want to be an int
+        public string NumOfCopies { get; set; } //want to be an int
     }
 
 }
