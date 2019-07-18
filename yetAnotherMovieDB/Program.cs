@@ -78,17 +78,13 @@ namespace MovieApp
                 case 3: 
                     Console.WriteLine("What is the title of your movie?");
                     string movieTitleSearch = Console.ReadLine();
-                    //works if I don't type with the right case or use a movie that doesn't exist
-                    //if movie exists, it returns it but still writes "There are no movies with that title in your database." to the console
-                    if (SearchMovies(movieTitleSearch).Count == 0)
-                            {  
-                                Console.WriteLine("There are no movies with that title in your database.");
-                            }
-                        else
-                            {
-                                SearchMovies(movieTitleSearch);
-                            }
-                    break;                    
+                    //if statement executed even when movie exists
+
+                    if (SearchMovies(movieTitleSearch).Count() == 0)
+                    {
+                        Console.WriteLine("You do not have this movie.");
+                    }             
+                    break;
                 case 4:
                     //edit logic to be added on 7/17
                 case 5:
@@ -112,7 +108,7 @@ namespace MovieApp
         */
         private static List<Movie> GetMovies()
         {
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source = ~\\yetAnotherMovieDB\\yetAnotherMovieDB\\MovieDatabase.sqlite; version=3;"))
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
             {
                 m_dbConnection.Open();
 
@@ -158,7 +154,7 @@ namespace MovieApp
                             {
                                 for (int i = 0; i < rdr.FieldCount; i++)
                                 {
-                                    //prints column name and result(s) to database
+                                //prints column name and result(s) to database
                                     if (rdr.HasRows)
                                     {
                                         //Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
