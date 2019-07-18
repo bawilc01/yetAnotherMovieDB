@@ -112,7 +112,7 @@ namespace MovieApp
         */
         private static List<Movie> GetMovies()
         {
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source = ~\\yetAnotherMovieDB\\yetAnotherMovieDB\\bin\\Debug\\netcoreapp2.1\\MovieDatabase.sqlite; version=3;"))
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source = ~\\yetAnotherMovieDB\\yetAnotherMovieDB\\MovieDatabase.sqlite; version=3;"))
             {
                 m_dbConnection.Open();
 
