@@ -17,15 +17,24 @@ namespace MovieApp
             //3  - Search
             //4  - Edit
             //5  - Delete
-            // anything else - Exit
+            //6  - Exit
 
             //absolute path to db fie
             //SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;");
 
             //relative path to db file
             //SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = ~\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite)
-      
-            Console.WriteLine("Press 1 to add a movie. Press 2 to view entire movie database. Press 3 to search a specific movie by title. Press 4 to update a movie's title, type or number of copies. Press 5 to delete a movie by title and type. Press any other key to quit.");
+            var lines = new[] {
+                "Press 1 to add a movie.",
+                "Press 2 to view entire movie database.",
+                "Press 3 to search a specific movie by title.",
+                "Press 4 to update a movie's title, type or number of copies.",
+                "Press 5 to delete a movie by title and type.",
+                "Press 6 to quit."
+            };
+
+            foreach (var line in lines)
+                Console.WriteLine(line);
 
             var input = int.Parse(Console.ReadLine());
 
@@ -63,36 +72,108 @@ namespace MovieApp
                     {
                         AddNewMovie(newMovie);
                         Console.WriteLine(newMovie.NumOfCopies + " copy of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
+                        Main();
                     }
                     else
                     {
                         AddNewMovie(newMovie);
                         Console.WriteLine(newMovie.NumOfCopies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
+                        Main();
                     }
                     break;
             
                 case 2:
                     Console.WriteLine("Here is your movie list: ");
                     GetMovies();
+                    Main();
                     break;
                 case 3: 
                     Console.WriteLine("What is the title of your movie?");
                     string movieTitleSearch = Console.ReadLine();
+
                     //if statement executed even when movie exists
 
-                    if (SearchMovies(movieTitleSearch).Count() == 0)
-                    {
-                        Console.WriteLine("You do not have this movie.");
-                    }             
+                    SearchMovies(movieTitleSearch);
+                    Main();
                     break;
                 case 4:
-                    //edit logic to be added on 7/17
+                    Console.WriteLine("To edit title, press 1. To edit movie type, press 2. To edit number of copies, press 3. To exit, press any key.");
+                    var editInput = int.Parse(Console.ReadLine());
+                    if (editInput == 1)
+                    {
+                        Console.WriteLine("What is the current title of your movie?");
+                        string useroriginalTitle = Console.ReadLine();
+
+                        Console.WriteLine("What is the new title?");
+                        string userNewTitle = Console.ReadLine();
+
+                        EditMovieTitle(useroriginalTitle, userNewTitle);
+                        Console.WriteLine("Your movie title is updated.");
+                    }
+                    else if (editInput == 2)
+                    {
+                        Console.WriteLine("What is the title of the movie needing an updated type?");
+                        string userMovieTitle = Console.ReadLine();
+
+                        Console.WriteLine("What is the movie's current type?");
+                        string userCurrentType = Console.ReadLine();
+
+                        Console.WriteLine("What is the movie's new type?");
+                        string userNewType = Console.ReadLine();
+
+                        EditMovieType(userMovieTitle, userNewType);
+                        Console.WriteLine("Your movie '" + userMovieTitle + "' is updated from type '" + userCurrentType + "' to type '" + userNewType + "'.");
+                    }
+                    else if (editInput == 3)
+                    {
+                        Console.WriteLine("What is the title of the movie needing an updated number of copies?");
+                        string userMovieTitle = Console.ReadLine();
+
+                        //string stringNum;
+                        Console.WriteLine("What is the movie's current number of copies?");
+                        string userCurrentCopies = Console.ReadLine();
+
+                        Console.WriteLine("What is the movie's new number of copies?");
+                        string userUpdatedNumofCopies = Console.ReadLine();
+
+                        Console.WriteLine("Your movie '" + userMovieTitle + "' now shows the number of copies as '" + userUpdatedNumofCopies + "'.");
+                        EditMovieCopies(userMovieTitle, userUpdatedNumofCopies);
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("No edits requested. Exiting.");
+                        Environment.Exit(0);
+                    }
+                    Main();
+                    break;
                 case 5:
-                //delete logic to be added on 7/17
-                //break;
-                default:
-                    Console.WriteLine("Exiting... valid input not selected.");
+                    Console.WriteLine("What is the title of your movie?");
+                    string movieToBeDeleted = Console.ReadLine();
+                    SearchMovies(movieToBeDeleted);
+
+                    Console.WriteLine("Is this the movie you want to delete? Press 1 for Yes or 2 for No.");
+                    var yesOrNo = int.Parse(Console.ReadLine());
+                    if (yesOrNo == 1)
+                    {
+                        DeleteMovies(movieToBeDeleted);
+                        Console.WriteLine("Your movie '" + movieToBeDeleted + "' has been deleted from your database.");
+                    }
+                    else if (yesOrNo == 2)
+                    {
+                        Console.WriteLine("Your movie '" + movieToBeDeleted + "' will not bes deleted from your database.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Valid option not selected. Exiting.");
+                    }
+                    Main();
+                    break;
+                case 6:
+                    Console.WriteLine("Exiting.");
                     Environment.Exit(0);
+                    break;
+                default:                    
                     return;
 
             }
@@ -100,7 +181,7 @@ namespace MovieApp
 
         }
         /***********************
-         * METHODS
+         * METHODS - will update numOfCopies from string to Int
          ***********************/
 
         /*
@@ -123,7 +204,7 @@ namespace MovieApp
                             for (int i = 0; i < rdr.FieldCount; i++)
                             {
                                 //prints column name and result(s) to database
-                                Console.WriteLine("{0} : {1} ", rdr.GetName(i).ToUpper(), rdr.GetValue(i));
+                                Console.WriteLine("{0}: {1} ", rdr.GetName(i).ToUpper(), rdr.GetValue(i));
                             }
                         }
                     }
@@ -139,10 +220,11 @@ namespace MovieApp
         private static List<Movie> SearchMovies(string movieTitle)
         
         {
-            List<Movie> newMovieList = new List<Movie>();
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;"))
-            {
-                m_dbConnection.Open();
+            List<Movie> newMovieList = new List<Movie>();           
+
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
+                {
+                    m_dbConnection.Open();
 
                     string stm = "SELECT * FROM MovieDatabase WHERE title = '" + movieTitle.ToUpper() + "';";
 
@@ -150,31 +232,32 @@ namespace MovieApp
                     {
                         using (SQLiteDataReader rdr = cmd.ExecuteReader())
                         {
-                            while (rdr.Read())
-                            {
-                                for (int i = 0; i < rdr.FieldCount; i++)
+                            
+                                while (rdr.Read())
                                 {
-                                //prints column name and result(s) to database
-                                    if (rdr.HasRows)
+                                    for (int i = 0; i < rdr.FieldCount; i++)
                                     {
-                                        //Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
-                                        Console.WriteLine("{0} : {1} ", rdr.GetName(i).ToUpper(), rdr.GetValue(i));
+                                //prints column name and result(s) to database
+                                        if (rdr.HasRows)
+                                        {
+                                            //Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
+                                            Console.WriteLine("{0} : {1} ", rdr.GetName(i).ToUpper(), rdr.GetValue(i));
+                                        }
                                     }
                                 }
-                            }
                         }
                     }
-
                 m_dbConnection.Close();
-            }
+                }
+
             return newMovieList;
         }
         /*
         ADD A MOVIE TO THE DATABASE
         */
-        public static void AddNewMovie(Movie movie)
+        private static void AddNewMovie(Movie movie)
         {
-            SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;");
+            SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;");
             m_dbConnection.Open();
 
             try
@@ -188,10 +271,101 @@ namespace MovieApp
             }
             m_dbConnection.Close();
         }
+        /*
+        EDIT A MOVIE TITLE IN THE DATABASE
+        */
+        private static List<Movie> EditMovieTitle(string originalTitle, string titleToEdit)
+        {
+            List<Movie> newMovieList = new List<Movie>();
+
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
+            {
+                m_dbConnection.Open();
+                    try
+                    {
+                        //string stm = "UPDATE MovieDatabase SET title = '" + titleToEdit.ToUpper() + "' WHERE title= '" + originalTitle + "';";
+                    SQLiteCommand updateSQL = new SQLiteCommand("UPDATE MovieDatabase SET title = '" + titleToEdit.ToUpper() + "' WHERE title= '" + originalTitle.ToUpper() + "'OR title= '" + originalTitle + "';", m_dbConnection);
+                    updateSQL.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                m_dbConnection.Close();
+            }
+            return newMovieList;
+        }
+
+        /*
+        EDIT A MOVIE TYPE IN THE DATABASE
+        */
+        private static List<Movie> EditMovieType(string movieTitle, string newType)
+        {
+            List<Movie> newMovieList = new List<Movie>();
+
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
+            {
+                m_dbConnection.Open();
+                try
+                {         
+                    SQLiteCommand updateSQL = new SQLiteCommand("UPDATE MovieDatabase SET movieType = '" + newType.ToUpper() + "' WHERE title= '" + movieTitle.ToUpper() + "'OR title= '" + movieTitle + "';", m_dbConnection);
+                    updateSQL.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                m_dbConnection.Close();
+            }
+            return newMovieList;
+        }
+
+        /*
+        EDIT MOVIE COPIES AMOUNT IN THE DATABASE
+        */
+        private static List<Movie> EditMovieCopies(string movieTitle, string updateCopies)
+        {
+            List<Movie> newMovieList = new List<Movie>();
+
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
+            {
+                m_dbConnection.Open();
+                try
+                {
+                    SQLiteCommand updateSQL = new SQLiteCommand("UPDATE MovieDatabase SET numOfCopies = '" + updateCopies + "' WHERE title= '" + movieTitle.ToUpper() + "';", m_dbConnection);
+                    updateSQL.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                m_dbConnection.Close();
+            }
+            return newMovieList;
+        }
+
+        /*
+        DELETE MOVIE FROM DATABASE
+        */
+        private static List<Movie> DeleteMovies(string movieTitle)
+        {
+            List<Movie> newMovieList = new List<Movie>();
+
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
+            {
+                m_dbConnection.Open();
+                try
+                {
+                    SQLiteCommand deleteSQL = new SQLiteCommand("DELETE FROM MovieDatabase WHERE title= '" + movieTitle.ToUpper() + "' OR title = '" + movieTitle + "';", m_dbConnection);
+                    deleteSQL.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                m_dbConnection.Close();
+            }
+            return newMovieList;
+        }
     }
-
-
-
-
-    
 }
