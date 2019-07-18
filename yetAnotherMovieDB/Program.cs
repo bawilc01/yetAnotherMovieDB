@@ -19,10 +19,12 @@ namespace MovieApp
             //5  - Delete
             // anything else - Exit
 
-            //need to update to relative connection string throughout app
+            //absolute path to db fie
             //SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;");
 
-            Console.WriteLine("Welcome. Please make a selection.");
+            //relative path to db file
+            //SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = ~\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite)
+      
             Console.WriteLine("Press 1 to add a movie. Press 2 to view entire movie database. Press 3 to search a specific movie by title. Press 4 to update a movie's title, type or number of copies. Press 5 to delete a movie by title and type. Press any other key to quit.");
 
             var input = int.Parse(Console.ReadLine());
@@ -110,7 +112,7 @@ namespace MovieApp
         */
         private static List<Movie> GetMovies()
         {
-            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;"))
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source = ~\\yetAnotherMovieDB\\yetAnotherMovieDB\\bin\\Debug\\netcoreapp2.1\\MovieDatabase.sqlite; version=3;"))
             {
                 m_dbConnection.Open();
 
