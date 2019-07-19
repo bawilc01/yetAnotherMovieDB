@@ -18,9 +18,29 @@ namespace MovieApp
             //4  - Edit
             //5  - Delete
             //6  - Exit
+            /*
+            CREATE TABLE MovieDatabase IF NOT EXISTS 
+            */
 
-            //absolute path to db fie
-            //SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = C:\Users\Brittney\source\repos\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite; version=3;");
+
+
+            using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
+            {
+                m_dbConnection.Open();
+                try
+                {
+                    SQLiteCommand createTable = new SQLiteCommand("CREATE TABLE IF NOT EXISTS MovieDatabase (title STRING, movieType STRING, numofCopies STRING);", m_dbConnection);
+                    createTable.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+                m_dbConnection.Close();
+            }
+
+
+
 
             //relative path to db file
             //SQLiteConnection MovieDatabaseConnection = new SQLiteConnection(@"Data Source = ~\yetAnotherMovieDB\yetAnotherMovieDB\bin\Debug\netcoreapp2.1\MovieDatabase.sqlite)
@@ -81,13 +101,13 @@ namespace MovieApp
                         Main();
                     }
                     break;
-            
+
                 case 2:
                     Console.WriteLine("Here is your movie list: ");
                     GetMovies();
                     Main();
                     break;
-                case 3: 
+                case 3:
                     Console.WriteLine("What is the title of your movie?");
                     string movieTitleSearch = Console.ReadLine();
 
@@ -173,7 +193,7 @@ namespace MovieApp
                     Console.WriteLine("Exiting.");
                     Environment.Exit(0);
                     break;
-                default:                    
+                default:
                     return;
 
             }
@@ -218,37 +238,37 @@ namespace MovieApp
         SEARCH DATABASE FOR A SPECIFIC FILM 
         */
         private static List<Movie> SearchMovies(string movieTitle)
-        
+
         {
-            List<Movie> newMovieList = new List<Movie>();           
+            List<Movie> newMovieList = new List<Movie>();
 
             using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
+            {
+                m_dbConnection.Open();
+
+                string stm = "SELECT * FROM MovieDatabase WHERE title = '" + movieTitle.ToUpper() + "';";
+
+                using (SQLiteCommand cmd = new SQLiteCommand(stm, m_dbConnection))
                 {
-                    m_dbConnection.Open();
-
-                    string stm = "SELECT * FROM MovieDatabase WHERE title = '" + movieTitle.ToUpper() + "';";
-
-                    using (SQLiteCommand cmd = new SQLiteCommand(stm, m_dbConnection))
+                    using (SQLiteDataReader rdr = cmd.ExecuteReader())
                     {
-                        using (SQLiteDataReader rdr = cmd.ExecuteReader())
+
+                        while (rdr.Read())
                         {
-                            
-                                while (rdr.Read())
-                                {
-                                    for (int i = 0; i < rdr.FieldCount; i++)
-                                    {
+                            for (int i = 0; i < rdr.FieldCount; i++)
+                            {
                                 //prints column name and result(s) to database
-                                        if (rdr.HasRows)
-                                        {
-                                            //Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
-                                            Console.WriteLine("{0} : {1} ", rdr.GetName(i).ToUpper(), rdr.GetValue(i));
-                                        }
-                                    }
+                                if (rdr.HasRows)
+                                {
+                                    //Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
+                                    Console.WriteLine("{0} : {1} ", rdr.GetName(i).ToUpper(), rdr.GetValue(i));
                                 }
+                            }
                         }
                     }
-                m_dbConnection.Close();
                 }
+                m_dbConnection.Close();
+            }
 
             return newMovieList;
         }
@@ -281,16 +301,16 @@ namespace MovieApp
             using (SQLiteConnection m_dbConnection = new SQLiteConnection(@"Data Source=MovieDatabase.sqlite;Version=3;"))
             {
                 m_dbConnection.Open();
-                    try
-                    {
-                        //string stm = "UPDATE MovieDatabase SET title = '" + titleToEdit.ToUpper() + "' WHERE title= '" + originalTitle + "';";
+                try
+                {
+                    //string stm = "UPDATE MovieDatabase SET title = '" + titleToEdit.ToUpper() + "' WHERE title= '" + originalTitle + "';";
                     SQLiteCommand updateSQL = new SQLiteCommand("UPDATE MovieDatabase SET title = '" + titleToEdit.ToUpper() + "' WHERE title= '" + originalTitle.ToUpper() + "'OR title= '" + originalTitle + "';", m_dbConnection);
                     updateSQL.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
                 m_dbConnection.Close();
             }
             return newMovieList;
@@ -307,7 +327,7 @@ namespace MovieApp
             {
                 m_dbConnection.Open();
                 try
-                {         
+                {
                     SQLiteCommand updateSQL = new SQLiteCommand("UPDATE MovieDatabase SET movieType = '" + newType.ToUpper() + "' WHERE title= '" + movieTitle.ToUpper() + "'OR title= '" + movieTitle + "';", m_dbConnection);
                     updateSQL.ExecuteNonQuery();
                 }
