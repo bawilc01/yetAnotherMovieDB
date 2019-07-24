@@ -53,9 +53,6 @@ namespace MovieApp
                 "Press 6 to quit."
             };
 
-            //foreach (var line in lines)
-            //    Console.WriteLine(line);
-
             
             string userInput = string.Empty;
             int parsedInt = 0;
@@ -64,33 +61,33 @@ namespace MovieApp
 
             while (!inputValid)
             {
-                //Console.Clear();
                 foreach (var line in lines)
                     Console.WriteLine(line);
 
                 userInput = Console.ReadLine();
                 inputValid = int.TryParse(userInput, out parsedInt);
 
-                if (parsedInt > 6 || !inputValid)
+                if (parsedInt < 1 || parsedInt > 6 || !inputValid)
                 {
-                    Console.WriteLine("Invalid input. Options are a number 1-6. Please try again.");
                     inputValid = false;
+                    Console.WriteLine("Invalid input. Options are a number 1-6. Please try again.");
                     continue;
                 }
 
-                    switch (parsedInt)
+                switch (parsedInt)
                     {
                         case 1:
                             Movie newMovie = new Movie();
                             Console.WriteLine("What is the title of your movie?");
-                            newMovie.Title = Console.ReadLine();
-                            var moviesExistingList = SearchMovies(newMovie.Title.ToUpper());
+                            newMovie.Title = Console.ReadLine().ToUpper();
+                        
 
-                            if (moviesExistingList.Count() > 0)
+                            if (SearchMovies(newMovie.Title).Count() >= 1)
                             {
                                 Console.WriteLine("This movie exists. Do you want to update the quantity? Enter Y or N.");
-                                //yesOrNo = Console.ReadLine();
-                                if (Console.ReadLine().ToUpper() == "Y")
+                                string answer = Console.ReadLine();
+
+                                if (answer == "Y")
                                 {
                                     //edit movie
                                     Console.WriteLine("What is the new number of copies?");
@@ -98,37 +95,40 @@ namespace MovieApp
                                     EditMovieCopies(newMovie.Title, newMovie.NumOfCopies);
                                     Console.WriteLine("The number of copies for " + newMovie.Title + "is updated to " + newMovie.NumOfCopies + ".");
                                 }
-                                
+                                else
+                                {
+                                    Environment.Exit(0);
+                                }
 
-                            }
-                        else
-                        {
-                            Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
-                            newMovie.MovieType = Console.ReadLine();
-
-                            Console.WriteLine("How many copies do you have?");
-                            newMovie.NumOfCopies = int.Parse(Console.ReadLine());
-
-                            if (newMovie.NumOfCopies == 0)
-                            {
-                                Console.WriteLine("Value cannot be 0. Please enter 1 or more copies.");
-                            }
-
-                            else if (newMovie.NumOfCopies == 1)
-                            {
-                                AddNewMovie(newMovie);
-                                Console.WriteLine(newMovie.NumOfCopies + " copy of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
-                                Main();
                             }
                             else
                             {
-                                AddNewMovie(newMovie);
-                                Console.WriteLine(newMovie.NumOfCopies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
-                                Main();
-                            }
-                            break;
+                                Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
+                                newMovie.MovieType = Console.ReadLine();
 
-                        }
+                                Console.WriteLine("How many copies do you have?");
+                                newMovie.NumOfCopies = int.Parse(Console.ReadLine());
+
+                                if (newMovie.NumOfCopies == 0)
+                                {
+                                    Console.WriteLine("Value cannot be 0. Please enter 1 or more copies.");
+                                }
+
+                                else if (newMovie.NumOfCopies == 1)
+                                {
+                                    AddNewMovie(newMovie);
+                                    Console.WriteLine(newMovie.NumOfCopies + " copy of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
+                                    Main();
+                                }
+                                else
+                                {
+                                    AddNewMovie(newMovie);
+                                    Console.WriteLine(newMovie.NumOfCopies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
+                                    Main();
+                                }
+                                break;
+
+                            }
                         break;
                         case 2:
                             Console.WriteLine("Here is your movie list: ");
