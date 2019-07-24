@@ -82,7 +82,7 @@ namespace MovieApp
                             newMovie.Title = Console.ReadLine().ToUpper();
                         
 
-                            if (SearchMovies(newMovie.Title).Count() >= 1)
+                            /*if (SearchMovies(newMovie.Title).Count() >= 1)
                             {
                                 Console.WriteLine("This movie exists. Do you want to update the quantity? Enter Y or N.");
                                 string answer = Console.ReadLine();
@@ -102,7 +102,7 @@ namespace MovieApp
 
                             }
                             else
-                            {
+                            {*/
                                 Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
                                 newMovie.MovieType = Console.ReadLine();
 
@@ -112,6 +112,8 @@ namespace MovieApp
                                 if (newMovie.NumOfCopies == 0)
                                 {
                                     Console.WriteLine("Value cannot be 0. Please enter 1 or more copies.");
+                                    Main();
+                                
                                 }
 
                                 else if (newMovie.NumOfCopies == 1)
@@ -126,9 +128,7 @@ namespace MovieApp
                                     Console.WriteLine(newMovie.NumOfCopies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
                                     Main();
                                 }
-                                break;
-
-                            }
+                            // for the else statement}
                         break;
                         case 2:
                             Console.WriteLine("Here is your movie list: ");
@@ -139,13 +139,11 @@ namespace MovieApp
                             Console.WriteLine("What is the title of your movie?");
                             string movieTitleSearch = Console.ReadLine();
 
-                            //if statement executed even when movie exists
-
                             SearchMovies(movieTitleSearch);
                             Main();
                             break;
                         case 4:
-                            Console.WriteLine("To edit title, press 1. To edit movie type, press 2. To edit number of copies, press 3. To exit, press any key.");
+                            Console.WriteLine("To edit title, press 1. To edit movie type, press 2. To edit number of copies, press 3. To exit, press 4.");
                             var editInput = int.Parse(Console.ReadLine());
                             if (editInput == 1)
                             {
@@ -188,11 +186,12 @@ namespace MovieApp
                                 EditMovieCopies(userMovieTitle, userUpdatedNumofCopies);
 
                             }
-                            else
+                            else if (editInput == 4) //will fix to not accept strings with while loop and tryParse
                             {
                                 Console.WriteLine("No edits requested. Exiting.");
                                 Environment.Exit(0);
                             }
+                            
                             Main();
                             break;
                         case 5:
@@ -209,12 +208,13 @@ namespace MovieApp
                             }
                             else if (yesOrNo == 2)
                             {
-                                Console.WriteLine("Your movie '" + movieToBeDeleted + "' will not bes deleted from your database.");
+                                Console.WriteLine("Your movie '" + movieToBeDeleted + "' will not be deleted from your database.");
                             }
                             else
                             {
                                 Console.WriteLine("Valid option not selected. Exiting.");
                             }
+                            
                             Main();
                             break;
                         case 6:
