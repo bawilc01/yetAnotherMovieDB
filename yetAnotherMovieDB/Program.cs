@@ -53,152 +53,179 @@ namespace MovieApp
                 "Press 6 to quit."
             };
 
-            foreach (var line in lines)
-                Console.WriteLine(line);
+            
+            string userInput = string.Empty;
+            int parsedInt = 0;
+            bool inputValid = false;
 
-            var input = int.Parse(Console.ReadLine());
 
-            switch (input)
+            while (!inputValid)
             {
-                case 1:
-                    Movie newMovie = new Movie();
-                    Console.WriteLine("What is the title of your movie?");
-                    newMovie.Title = Console.ReadLine();
+                foreach (var line in lines)
+                    Console.WriteLine(line);
 
+                userInput = Console.ReadLine();
+                inputValid = int.TryParse(userInput, out parsedInt);
 
-                    Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
-                    newMovie.MovieType = Console.ReadLine();
+                if (parsedInt < 1 || parsedInt > 6 || !inputValid)
+                {
+                    inputValid = false;
+                    Console.WriteLine("Invalid input. Options are a number 1-6. Please try again.");
+                    continue;
+                }
 
-                    //will try to fix int not being written to db before deadline
-                    //have to convert int to string since NumOfCopies is an int in the Movie class
-                    //convert movieCopies from string to int and return answer depending on number of copies owned
-
-                    //string movieCopies;
-                    Console.WriteLine("How many copies do you have?");
-                    newMovie.NumOfCopies = Console.ReadLine();
-
-                    //will try to fix before deadline; int not being written to db
-                    /*int copies = newMovie.NumOfCopies;
-                    if (!Int32.TryParse(movieCopies, out copies)) 
-                    if
+                switch (parsedInt)
                     {
-                        Console.WriteLine("Invalid data input. Only whole numbers accepted. Please try again.");
-                    }*/
-                    if (newMovie.NumOfCopies == "0")
-                    {
-                        Console.WriteLine("Value cannot be 0. Please enter 1 or more copies.");
+                        case 1:
+                            Movie newMovie = new Movie();
+                            Console.WriteLine("What is the title of your movie?");
+                            newMovie.Title = Console.ReadLine().ToUpper();
+                        
+
+                            if (SearchMovies(newMovie.Title).Count() >= 1)
+                            {
+                                Console.WriteLine("This movie exists. Do you want to update the quantity? Enter Y or N.");
+                                string answer = Console.ReadLine();
+
+                                if (answer == "Y")
+                                {
+                                    //edit movie
+                                    Console.WriteLine("What is the new number of copies?");
+                                    newMovie.NumOfCopies = int.Parse(Console.ReadLine());
+                                    EditMovieCopies(newMovie.Title, newMovie.NumOfCopies);
+                                    Console.WriteLine("The number of copies for " + newMovie.Title + "is updated to " + newMovie.NumOfCopies + ".");
+                                }
+                                else
+                                {
+                                    Environment.Exit(0);
+                                }
+
+                            }
+                            else
+                            {
+                                Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
+                                newMovie.MovieType = Console.ReadLine();
+
+                                Console.WriteLine("How many copies do you have?");
+                                newMovie.NumOfCopies = int.Parse(Console.ReadLine());
+
+                                if (newMovie.NumOfCopies == 0)
+                                {
+                                    Console.WriteLine("Value cannot be 0. Please enter 1 or more copies.");
+                                    Main();
+                                
+                                }
+
+                                else if (newMovie.NumOfCopies == 1)
+                                {
+                                    AddNewMovie(newMovie);
+                                    Console.WriteLine(newMovie.NumOfCopies + " copy of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
+                                    Main();
+                                }
+                                else
+                                {
+                                    AddNewMovie(newMovie);
+                                    Console.WriteLine(newMovie.NumOfCopies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
+                                    Main();
+                                }
+                            }
+                        break;
+                        case 2:
+                            Console.WriteLine("Here is your movie list: ");
+                            GetMovies();
+                            Main();
+                            break;
+                        case 3:
+                            Console.WriteLine("What is the title of your movie?");
+                            string movieTitleSearch = Console.ReadLine();
+
+                            SearchMovies(movieTitleSearch);
+                            Main();
+                            break;
+                        case 4:
+                            Console.WriteLine("To edit title, press 1. To edit movie type, press 2. To edit number of copies, press 3. To exit, press 4.");
+                            var editInput = int.Parse(Console.ReadLine());
+                            if (editInput == 1)
+                            {
+                                Console.WriteLine("What is the current title of your movie?");
+                                string useroriginalTitle = Console.ReadLine();
+
+                                Console.WriteLine("What is the new title?");
+                                string userNewTitle = Console.ReadLine();
+
+                                EditMovieTitle(useroriginalTitle, userNewTitle);
+                                Console.WriteLine("Your movie title is updated.");
+                            }
+                            else if (editInput == 2)
+                            {
+                                Console.WriteLine("What is the title of the movie needing an updated type?");
+                                string userMovieTitle = Console.ReadLine();
+
+                                Console.WriteLine("What is the movie's current type?");
+                                string userCurrentType = Console.ReadLine();
+
+                                Console.WriteLine("What is the movie's new type?");
+                                string userNewType = Console.ReadLine();
+
+                                EditMovieType(userMovieTitle, userNewType);
+                                Console.WriteLine("Your movie '" + userMovieTitle + "' is updated from type '" + userCurrentType + "' to type '" + userNewType + "'.");
+                            }
+                            else if (editInput == 3)
+                            {
+                                Console.WriteLine("What is the title of the movie needing an updated number of copies?");
+                                string userMovieTitle = Console.ReadLine();
+
+                                //string stringNum;
+                                Console.WriteLine("What is the movie's current number of copies?");
+                                int userCurrentCopies = int.Parse(Console.ReadLine());
+
+                                Console.WriteLine("What is the movie's new number of copies?");
+                                int userUpdatedNumofCopies = int.Parse(Console.ReadLine());
+
+                                Console.WriteLine("Your number of copies for '" + userMovieTitle + "' is updated from " + userCurrentCopies + " to '" + userUpdatedNumofCopies + "'.");
+                                EditMovieCopies(userMovieTitle, userUpdatedNumofCopies);
+
+                            }
+                            else if (editInput == 4) //will fix to not accept strings with while loop and tryParse
+                            {
+                                Console.WriteLine("No edits requested. Exiting.");
+                                Environment.Exit(0);
+                            }
+                            
+                            Main();
+                            break;
+                        case 5:
+                            Console.WriteLine("What is the title of your movie?");
+                            string movieToBeDeleted = Console.ReadLine();
+                            SearchMovies(movieToBeDeleted);
+
+                            Console.WriteLine("Is this the movie you want to delete? Press 1 for Yes or 2 for No.");
+                            var yesOrNo = int.Parse(Console.ReadLine());
+                            if (yesOrNo == 1)
+                            {
+                                DeleteMovies(movieToBeDeleted);
+                                Console.WriteLine("Your movie '" + movieToBeDeleted + "' has been deleted from your database.");
+                            }
+                            else if (yesOrNo == 2)
+                            {
+                                Console.WriteLine("Your movie '" + movieToBeDeleted + "' will not be deleted from your database.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Valid option not selected. Exiting.");
+                            }
+                            
+                            Main();
+                            break;
+                        case 6:
+                            Console.WriteLine("Exiting.");
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            return;
+
                     }
-                    else if (newMovie.NumOfCopies == "1")
-                    {
-                        AddNewMovie(newMovie);
-                        Console.WriteLine(newMovie.NumOfCopies + " copy of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
-                        Main();
-                    }
-                    else
-                    {
-                        AddNewMovie(newMovie);
-                        Console.WriteLine(newMovie.NumOfCopies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
-                        Main();
-                    }
-                    break;
-
-                case 2:
-                    Console.WriteLine("Here is your movie list: ");
-                    GetMovies();
-                    Main();
-                    break;
-                case 3:
-                    Console.WriteLine("What is the title of your movie?");
-                    string movieTitleSearch = Console.ReadLine();
-
-                    //if statement executed even when movie exists
-
-                    SearchMovies(movieTitleSearch);
-                    Main();
-                    break;
-                case 4:
-                    Console.WriteLine("To edit title, press 1. To edit movie type, press 2. To edit number of copies, press 3. To exit, press any key.");
-                    var editInput = int.Parse(Console.ReadLine());
-                    if (editInput == 1)
-                    {
-                        Console.WriteLine("What is the current title of your movie?");
-                        string useroriginalTitle = Console.ReadLine();
-
-                        Console.WriteLine("What is the new title?");
-                        string userNewTitle = Console.ReadLine();
-
-                        EditMovieTitle(useroriginalTitle, userNewTitle);
-                        Console.WriteLine("Your movie title is updated.");
-                    }
-                    else if (editInput == 2)
-                    {
-                        Console.WriteLine("What is the title of the movie needing an updated type?");
-                        string userMovieTitle = Console.ReadLine();
-
-                        Console.WriteLine("What is the movie's current type?");
-                        string userCurrentType = Console.ReadLine();
-
-                        Console.WriteLine("What is the movie's new type?");
-                        string userNewType = Console.ReadLine();
-
-                        EditMovieType(userMovieTitle, userNewType);
-                        Console.WriteLine("Your movie '" + userMovieTitle + "' is updated from type '" + userCurrentType + "' to type '" + userNewType + "'.");
-                    }
-                    else if (editInput == 3)
-                    {
-                        Console.WriteLine("What is the title of the movie needing an updated number of copies?");
-                        string userMovieTitle = Console.ReadLine();
-
-                        //string stringNum;
-                        Console.WriteLine("What is the movie's current number of copies?");
-                        string userCurrentCopies = Console.ReadLine();
-
-                        Console.WriteLine("What is the movie's new number of copies?");
-                        string userUpdatedNumofCopies = Console.ReadLine();
-
-                        Console.WriteLine("Your movie '" + userMovieTitle + "' now shows the number of copies as '" + userUpdatedNumofCopies + "'.");
-                        EditMovieCopies(userMovieTitle, userUpdatedNumofCopies);
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("No edits requested. Exiting.");
-                        Environment.Exit(0);
-                    }
-                    Main();
-                    break;
-                case 5:
-                    Console.WriteLine("What is the title of your movie?");
-                    string movieToBeDeleted = Console.ReadLine();
-                    SearchMovies(movieToBeDeleted);
-
-                    Console.WriteLine("Is this the movie you want to delete? Press 1 for Yes or 2 for No.");
-                    var yesOrNo = int.Parse(Console.ReadLine());
-                    if (yesOrNo == 1)
-                    {
-                        DeleteMovies(movieToBeDeleted);
-                        Console.WriteLine("Your movie '" + movieToBeDeleted + "' has been deleted from your database.");
-                    }
-                    else if (yesOrNo == 2)
-                    {
-                        Console.WriteLine("Your movie '" + movieToBeDeleted + "' will not bes deleted from your database.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Valid option not selected. Exiting.");
-                    }
-                    Main();
-                    break;
-                case 6:
-                    Console.WriteLine("Exiting.");
-                    Environment.Exit(0);
-                    break;
-                default:
-                    return;
-
             }
-
-
         }
         /***********************
          * METHODS - will update numOfCopies from string to Int
@@ -262,6 +289,7 @@ namespace MovieApp
                                 {
                                     //Console.WriteLine(rdr.GetName(i) + ": " + rdr.GetValue(i));
                                     Console.WriteLine("{0} : {1} ", rdr.GetName(i).ToUpper(), rdr.GetValue(i));
+                                    
                                 }
                             }
                         }
@@ -269,8 +297,8 @@ namespace MovieApp
                 }
                 m_dbConnection.Close();
             }
-
             return newMovieList;
+
         }
         /*
         ADD A MOVIE TO THE DATABASE
@@ -282,7 +310,7 @@ namespace MovieApp
 
             try
             {
-                SQLiteCommand insertSQL = new SQLiteCommand("INSERT INTO MovieDatabase (title, movieType, numOfCopies) VALUES ('" + movie.Title.ToUpper() + "'" + ", '" + movie.MovieType.ToUpper() + "'" + ", " + movie.NumOfCopies.ToUpper() + ");", m_dbConnection);
+                SQLiteCommand insertSQL = new SQLiteCommand("INSERT INTO MovieDatabase (title, movieType, numOfCopies) VALUES ('" + movie.Title.ToUpper() + "'" + ", '" + movie.MovieType.ToUpper() + "'" + ", " + movie.NumOfCopies + ");", m_dbConnection);
                 insertSQL.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -340,10 +368,12 @@ namespace MovieApp
             return newMovieList;
         }
 
+        // System.Convert.ToInt32("5");
+
         /*
         EDIT MOVIE COPIES AMOUNT IN THE DATABASE
         */
-        private static List<Movie> EditMovieCopies(string movieTitle, string updateCopies)
+        private static List<Movie> EditMovieCopies(string movieTitle, int updateCopies)
         {
             List<Movie> newMovieList = new List<Movie>();
 
