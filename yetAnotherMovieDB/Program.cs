@@ -82,7 +82,7 @@ namespace MovieApp
                             newMovie.Title = Console.ReadLine().ToUpper();
                         
 
-                            /*if (SearchMovies(newMovie.Title).Count() >= 1)
+                            if (SearchMovies(newMovie.Title).Count() >= 1)
                             {
                                 Console.WriteLine("This movie exists. Do you want to update the quantity? Enter Y or N.");
                                 string answer = Console.ReadLine();
@@ -102,7 +102,7 @@ namespace MovieApp
 
                             }
                             else
-                            {*/
+                            {
                                 Console.WriteLine("What is your movie type? DVD, Bluray, or Digital?");
                                 newMovie.MovieType = Console.ReadLine();
 
@@ -128,7 +128,7 @@ namespace MovieApp
                                     Console.WriteLine(newMovie.NumOfCopies + " copies of " + newMovie.Title + " of type " + newMovie.MovieType + " has been added to your database.");
                                     Main();
                                 }
-                            // for the else statement}
+                            }
                         break;
                         case 2:
                             Console.WriteLine("Here is your movie list: ");
